@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" >
+<style>
+* { box-sizing: border-box; }
+body { font-family: sans-serif; }
+.scene {
+  width: 200px;
+  height: 200px;
+  border: 1px solid #CCC;
+  margin: 80px;
+  perspective: 400px;
+}
+.cube {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: translateZ(-100px);
+}
+.cube.is-spinning {
+  animation: spinCube 8s infinite ease-in-out;
+}
+@keyframes spinCube {
+    0% { transform: translateZ(-100px) rotateX(  0deg) rotateY(  0deg); }
+  100% { transform: translateZ(-100px) rotateX(360deg) rotateY(360deg); }
+}
+.cube__face {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border: 2px solid black;
+  line-height: 200px;
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
+.cube__face--front  { background: hsla(  0, 100%, 50%, 0.7); }
+.cube__face--right  { background: hsla( 60, 100%, 50%, 0.7); }
+.cube__face--back   { background: hsla(120, 100%, 50%, 0.7); }
+.cube__face--left   { background: hsla(180, 100%, 50%, 0.7); }
+.cube__face--top    { background: hsla(240, 100%, 50%, 0.7); }
+.cube__face--bottom { background: hsla(300, 100%, 50%, 0.7); }
+
+.cube__face--front  { transform: rotateY(  0deg) translateZ(100px); }
+.cube__face--right  { transform: rotateY( 90deg) translateZ(100px); }
+.cube__face--back   { transform: rotateY(180deg) translateZ(100px); }
+.cube__face--left   { transform: rotateY(-90deg) translateZ(100px); }
+.cube__face--top    { transform: rotateX( 90deg) translateZ(100px); }
+.cube__face--bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+.cube.is-backface-hidden .cube__face {
+  backface-visibility: hidden;
+}
+</style>
+</head>
+<body>
+<h1>Лабораторная работа 3D-преобразования</h1>
+<div class="scene">
+  <div class="cube">
+    <div class="cube__face cube__face--front">front</div>
+    <div class="cube__face cube__face--back">back</div>
+    <div class="cube__face cube__face--right">right</div>
+    <div class="cube__face cube__face--left">left</div>
+    <div class="cube__face cube__face--top">top</div>
+    <div class="cube__face cube__face--bottom">bottom</div>
+  </div>
+</div>
+<p>
+  <label>
+    perspective
+    <input class="perspective-range" type="range" min="1" max="1000" value="400" data-units="px" />
+  </label>
+</p>
+<p>
+  <label>
+    perspective-origin x
+    <input class="origin-x-range" type="range" min="0" max="100" value="50" data-units="%" />
+  </label>
+</p>
+<p>
+  <label>
+    perspective-origin y
+    <input class="origin-y-range" type="range" min="0" max="100" value="50" data-units="%" />
+  </label>
+</p>
+<p>
+  <label>
+    Вращение куба
+    <input class="spin-cube-checkbox" type="checkbox" />
+  </label>
+</p>
+<p>
+  <label>
+    Невидимые поверхности
+    <input class="backface-checkbox" type="checkbox" checked />
+  </label>
+</p>
+<script>
+"use strict";
+function RangeDisplay( input ) {
+  this.input = input;
+  this.output = document.createElement('span');
+  this.output.className = 'range-display';
+  this.units = this.input.getAttribute('data-units') || '';
+  this.update=()=>this.output.textContent = this.input.value + this.units;
+  const onChange = this.update.bind( this );
+  this.input.addEventListener( 'change', onChange );
+  this.input.addEventListener( 'input', onChange );
+  this.update(this);
+  this.input.parentNode.appendChild( this.output );
+}
+document.querySelectorAll('input[type="range"]').forEach(element=>new RangeDisplay(element));
+const scene = document.querySelector('.scene');
+const cube = document.querySelector('.cube');
+let originX = 50;
+let originY = 50;
+const updatePerspectiveOrigin=()=>
+ scene.style.perspectiveOrigin = originX + '% ' + originY + '%';
+const perspectiveRange = document.querySelector('.perspective-range');
+const perspectiveDisplay = perspectiveRange.parentNode.querySelector('.range-display');
+perspectiveRange.onchange = perspectiveRange.oninput = ()=>{
+  let value = perspectiveRange.value + 'px';
+  if ( value == '1000px' ) {
+    value = 'none';
+    perspectiveDisplay.textContent = 'none';
+  }
+  scene.style.perspective = value;
+};
+perspectiveRange.onchange();
+const originXRange = document.querySelector('.origin-x-range');
+originXRange.onchange = originXRange.oninput = ()=> {
+  originX = originXRange.value;
+  updatePerspectiveOrigin();
+};
+originXRange.onchange();
+const originYRange = document.querySelector('.origin-y-range');
+originYRange.onchange = originYRange.oninput = ()=>{
+  originY = originYRange.value;
+  updatePerspectiveOrigin();
+};
+originYRange.onchange();
+const spinCubeCheckbox = document.querySelector('.spin-cube-checkbox');
+spinCubeCheckbox.onchange = () => 
+  cube.classList.toggle( 'is-spinning', spinCubeCheckbox.checked );
+spinCubeCheckbox.onchange();
+const backfaceCheckbox = document.querySelector('.backface-checkbox');
+backfaceCheckbox.onchange = () =>
+  cube.classList.toggle( 'is-backface-hidden', !backfaceCheckbox.checked );
+</script>
+</body>
+</html>
