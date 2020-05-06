@@ -74,30 +74,37 @@ body { font-family: sans-serif; }
     perspective
     <input class="perspective-range" type="range" min="1" max="1000" value="400" data-units="px" />
   </label>
-</p>
-<p>
+<br>
   <label>
     perspective-origin x
     <input class="origin-x-range" type="range" min="0" max="100" value="50" data-units="%" />
   </label>
-</p>
-<p>
+<br>
   <label>
     perspective-origin y
     <input class="origin-y-range" type="range" min="0" max="100" value="50" data-units="%" />
   </label>
-</p>
-<p>
+<br>
   <label>
-    Вращение куба
+    Вращение куба CSS3-анимация
     <input class="spin-cube-checkbox" type="checkbox" />
   </label>
-</p>
-<p>
+<br>
   <label>
     Невидимые поверхности
     <input class="backface-checkbox" type="checkbox" checked />
   </label>
+<br>
+  <span class="rxyz">
+  <label>
+    Вращение JavaScript по Х
+    <input class="xrotate-checkbox" type="checkbox" checked />
+    Y
+    <input class="yrotate-checkbox" type="checkbox" checked />
+    Z
+    <input class="zrotate-checkbox" type="checkbox" checked />
+  </label>
+  </span>
 </p>
 </div>
 <div>
@@ -122,6 +129,24 @@ const scene = document.querySelector('.scene');
 const cube = document.querySelector('.cube');
 let originX = 50;
 let originY = 50;
+let rotateY = 0;
+let rotateX = 0;
+let rotateZ = 0;
+let currStepX=4; 
+let currStepY=4; 
+let currStepZ=4; 
+let stepX=currStepX; 
+let stepY=currStepY; 
+let stepZ=currStepZ; 
+let limitSteps=10000;
+let currStep=0;
+
+let start = null;
+		document.querySelector('.cube').style.transform = 
+      'rotateY(' + rotateY + 'deg)'+
+      'rotateX(' + rotateX + 'deg)';
+
+const cubeElement = document.querySelector('.cube');
 const updatePerspectiveOrigin=()=>
  scene.style.perspectiveOrigin = originX + '% ' + originY + '%';
 const perspectiveRange = document.querySelector('.perspective-range');
@@ -148,12 +173,89 @@ originYRange.onchange = originYRange.oninput = ()=>{
 };
 originYRange.onchange();
 const spinCubeCheckbox = document.querySelector('.spin-cube-checkbox');
-spinCubeCheckbox.onchange = () => 
-  cube.classList.toggle( 'is-spinning', spinCubeCheckbox.checked );
+const rotateSpan = document.querySelector('.rxyz');
+spinCubeCheckbox.onchange = () => {
+    cube.classList.toggle( 'is-spinning', spinCubeCheckbox.checked );
+    if (spinCubeCheckbox.checked)
+	   rotateSpan.style.visibility='hidden';
+	else
+	   rotateSpan.style.visibility='visible';
+	   
+  }
 spinCubeCheckbox.onchange();
 const backfaceCheckbox = document.querySelector('.backface-checkbox');
 backfaceCheckbox.onchange = () =>
   cube.classList.toggle( 'is-backface-hidden', !backfaceCheckbox.checked );
+const rotateXCubeCheckbox = document.querySelector('.xrotate-checkbox');
+const rotateYCubeCheckbox = document.querySelector('.yrotate-checkbox');
+const rotateZCubeCheckbox = document.querySelector('.zrotate-checkbox');
+rotateXCubeCheckbox.onchange = () => {
+     stepX=rotateXCubeCheckbox.checked?currStepX:0;
+}
+rotateYCubeCheckbox.onchange = () => {
+     stepY=rotateYCubeCheckbox.checked?currStepY:0;
+}
+rotateZCubeCheckbox.onchange = () => {
+     stepZ=rotateZCubeCheckbox.checked?currStepZ:0;
+}
+rotateXCubeCheckbox.checked=false;
+rotateYCubeCheckbox.checked=false;
+rotateZCubeCheckbox.checked=false;
+requestAnimationFrame(step);
+function step(timestamp) {
+  if (!start) start = timestamp;
+  let progress = timestamp - start;
+//  console.log('movement '+start+' '+progress+' '+timestamp); 
+  if (progress>200) {
+  //   console.log('movement'); 
+     start=timestamp; 
+     rotateX+=stepX;
+     rotateY+=stepY;
+     rotateZ+=stepZ;
+	 //let s=
+  //   console.log(rotateX+' '+rotateY+' '+rotateZ); 
+     let sX='';
+	 let sY='';
+	 let sZ='';
+	 let s='';
+//	 console.log(rotateXCubeCheckbox.checked+' '+rotateYCubeCheckbox.checked+' '+rotateZCubeCheckbox.checked);
+	 sX=rotateXCubeCheckbox.checked?`rotateX(${rotateX}deg)`:'';
+//     console.log('sX '+sX);
+	 sY=rotateYCubeCheckbox.checked?`rotateY(${rotateY}deg)`:'';
+//     console.log('sY '+sY);
+	 sZ=rotateZCubeCheckbox.checked?`rotateZ(${rotateZ}deg)`:'';
+//     console.log('sZ '+sZ);
+     s=sX+sY+sZ;
+//	 console.log(s);
+	 cubeElement.style.transform=s; 
+/*
+     cubeElement.style.transform = `rotateX(${rotateX}deg) 
+        rotateY(${rotateY}deg)
+        rotateZ(${rotateZ}deg)`;
+	 console.log(cubeElement.style.transform);	
+*/
+   }
+   if (currStep++<limitSteps)
+    requestAnimationFrame(step);
+}
+
+/*
+(function () {
+	var rotateY = 0,
+	    rotateX = 0;
+
+	document.onkeydown = function (e) {
+		if (e.keyCode === 37) rotateY -= 4
+		else if (e.keyCode === 38) rotateX += 4
+		else if (e.keyCode === 39) rotateY += 4
+		else if (e.keyCode === 40) rotateX -= 4
+
+		document.querySelector('.cube').style.transform = 
+      'rotateY(' + rotateY + 'deg)'+
+      'rotateX(' + rotateX + 'deg)';
+    }
+})();
+*/
 </script>
 </body>
 </html>
