@@ -62,7 +62,9 @@ body { font-family: sans-serif; }
   text-align: center;
   background: #F4F1F8;
 }
-
+td {
+  text-align:center;
+}
 section {
   display: block;
   width: 660px;
@@ -117,7 +119,83 @@ div {
 @keyframes notransform {
   50% {transform: none;}
 }
+/* ---------- */
+/*body { font-family: sans-serif; }*/
 
+.sceneRect {
+  width: 300px;
+  height: 200px;
+  border: 1px solid #CCC;
+  margin: 80px;
+  perspective: 400px;
+}
+
+.boxRect {
+  width: 300px;
+  height: 200px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: translateZ(-50px);
+  transition: transform 1s;
+}
+
+.boxRect.show-front  { transform: translateZ( -50px) rotateY(   0deg); }
+.boxRect.show-back   { transform: translateZ( -50px) rotateY(-180deg); }
+.boxRect.show-right  { transform: translateZ(-150px) rotateY( -90deg); }
+.boxRect.show-left   { transform: translateZ(-150px) rotateY(  90deg); }
+.boxRect.show-top    { transform: translateZ(-100px) rotateX( -90deg); }
+.boxRect.show-bottom { transform: translateZ(-100px) rotateX(  90deg); }
+
+
+.boxRect__face {
+  position: absolute;
+  border: 2px solid black;
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
+
+.boxRect__face--front,
+.boxRect__face--back {
+  width: 300px;
+  height: 200px;
+  line-height: 200px;
+}
+
+.boxRect__face--right,
+.boxRect__face--left {
+  width: 100px;
+  height: 200px;
+  left: 100px;
+  line-height: 200px;
+}
+
+.boxRect__face--top,
+.boxRect__face--bottom {
+  width: 300px;
+  height: 100px;
+  top: 50px;
+  line-height: 100px;
+}
+
+.boxRect__face--front  { background: hsla(  0, 100%, 50%, 0.7); }
+.boxRect__face--right  { background: hsla( 60, 100%, 50%, 0.7); }
+.boxRect__face--back   { background: hsla(120, 100%, 50%, 0.7); }
+.boxRect__face--left   { background: hsla(180, 100%, 50%, 0.7); }
+.boxRect__face--top    { background: hsla(240, 100%, 50%, 0.7); }
+.boxRect__face--bottom { background: hsla(300, 100%, 50%, 0.7); }
+
+.boxRect__face--front  { transform: rotateY(  0deg) translateZ( 50px); }
+.boxRect__face--back   { transform: rotateY(180deg) translateZ( 50px); }
+
+.boxRect__face--right  { transform: rotateY( 90deg) translateZ(150px); }
+.boxRect__face--left   { transform: rotateY(-90deg) translateZ(150px); }
+
+.boxRect__face--top    { transform: rotateX( 90deg) translateZ(100px); }
+.boxRect__face--bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+label { margin-right: 10px; }
 
 </style>
 </head>
@@ -136,17 +214,17 @@ div {
 <p>
   <label>
     perspective
-    <input class="perspective-range" type="range" min="1" max="1000" value="400" data-units="px" />
+    <input class="perspective-range rng" type="range" min="1" max="1000" value="400" data-units="px" />
   </label>
 <br>
   <label>
     perspective-origin x
-    <input class="origin-x-range" type="range" min="0" max="100" value="50" data-units="%" />
+    <input class="origin-x-range rng" type="range" min="0" max="100" value="50" data-units="%" />
   </label>
 <br>
   <label>
     perspective-origin y
-    <input class="origin-y-range" type="range" min="0" max="100" value="50" data-units="%" />
+    <input class="origin-y-range rng" type="range" min="0" max="100" value="50" data-units="%" />
   </label>
 <br>
   <label>
@@ -159,27 +237,66 @@ div {
     <input class="backface-checkbox" type="checkbox" checked />
   </label>
 <br>
-  <span class="rxyz">
-  <label>
-    Вращение JavaScript по Х
-    <input class="xrotate-checkbox" type="checkbox" />
-    Y
-    <input class="yrotate-checkbox" type="checkbox" />
-    Z
-    <input class="zrotate-checkbox" type="checkbox" />
-  </label>
-  <br />
-  <label>
-    Направл. вращение по Х
-    <input class="xdrotate-checkbox" type="checkbox" />
-    Y
-    <input class="ydrotate-checkbox" type="checkbox"  />
-    Z
-    <input class="zdrotate-checkbox" type="checkbox"  />
-  </label>
-  </span>
+  <!--<span class="rxyz">-->
+  <table class="rxyz">
+  <tr>
+    <td>Вращение JavaScript</td><td>Х</td><td>Y</td><td>Z</td>
+  </tr>	
+  <tr>
+    <td>Включено</td>
+    <td><input class="xrotate-checkbox" type="checkbox" /></td>
+    <td><input class="yrotate-checkbox" type="checkbox" /></td>
+    <td><input class="zrotate-checkbox" type="checkbox" /></td>
+  </tr>	
+  <tr>
+    <td>Направление вращения (-)</td>
+    <td><input class="xdrotate-checkbox" type="checkbox" /></td>
+    <td><input class="ydrotate-checkbox" type="checkbox" /></td>
+    <td><input class="zdrotate-checkbox" type="checkbox" /></td>
+  </tr>	
+  <tr>
+    <td>Скорость вращения</td>
+    <td><input class="speed-x" type="range" min="0" max="100" value="10"  /></td>
+    <td><input class="speed-y" type="range" min="0" max="100" value="10"  /></td>
+    <td><input class="speed-z" type="range" min="0" max="100" value="10"  /></td>
+  </tr>	
+  </table>
+  <!--</span>-->
 </p>
+
+
+<div class="sceneRect">
+  <div class="boxRect">
+    <div class="boxRect__face boxRect__face--front">front</div>
+    <div class="boxRect__face boxRect__face--back">back</div>
+    <div class="boxRect__face boxRect__face--right">right</div>
+    <div class="boxRect__face boxRect__face--left">left</div>
+    <div class="boxRect__face boxRect__face--top">top</div>
+    <div class="boxRect__face boxRect__face--bottom">bottom</div>
+  </div>
 </div>
+<p class="radio-group">
+  <label>
+    <input type="radio" name="rotate-cube-side" value="front" checked /> front
+  </label>
+  <label>
+    <input type="radio" name="rotate-cube-side" value="right" /> right
+  </label>
+  <label>
+    <input type="radio" name="rotate-cube-side" value="back" /> back
+  </label>
+  <label>
+    <input type="radio" name="rotate-cube-side" value="left" /> left
+  </label>
+  <label>
+    <input type="radio" name="rotate-cube-side" value="top" /> top
+  </label>
+  <label>
+    <input type="radio" name="rotate-cube-side" value="bottom" /> bottom
+  </label>
+</p>
+
+
 
 <h2>CSS3 3D Трансформации</h2>
 <section>
@@ -207,7 +324,7 @@ div {
   <div class="transform  rotateZ"><h4>rotateZ(180deg)</h4></div>
   </div>
 </section>
-</div>
+
 
 <script>
 "use strict";
@@ -223,24 +340,25 @@ function RangeDisplay( input ) {
   this.update(this);
   this.input.parentNode.appendChild( this.output );
 }
-document.querySelectorAll('input[type="range"]').forEach(element=>new RangeDisplay(element));
+//document.querySelectorAll('input[type="range"]').forEach(element=>new RangeDisplay(element));
+document.querySelectorAll('.rng').forEach(element=>new RangeDisplay(element));
 const scene = document.querySelector('.scene');
 const cube = document.querySelector('.cube');
 let originX = 50;
 let originY = 50;
-let rotateY = 0;
 let rotateX = 0;
+let rotateY = 0;
 let rotateZ = 0;
 let currStepX=4; 
 let currStepY=4; 
 let currStepZ=4;
-let rotateXDirection=1; 
-let rotateYDirection=1; 
-let rotateZDirection=1; 
-
+let maxStep=60;
 let stepX=currStepX; 
 let stepY=currStepY; 
 let stepZ=currStepZ; 
+let rotateXDirection=1; 
+let rotateYDirection=1; 
+let rotateZDirection=1; 
 let limitSteps=10000;
 let currStep=0;
 
@@ -295,6 +413,9 @@ const rotateZCubeCheckbox = document.querySelector('.zrotate-checkbox');
 const rotateXDCubeCheckbox = document.querySelector('.xdrotate-checkbox');
 const rotateYDCubeCheckbox = document.querySelector('.ydrotate-checkbox');
 const rotateZDCubeCheckbox = document.querySelector('.zdrotate-checkbox');
+const rotateXSpeedRange = document.querySelector('.speed-x');
+const rotateYSpeedRange = document.querySelector('.speed-y');
+const rotateZSpeedRange = document.querySelector('.speed-z');
 rotateXCubeCheckbox.onchange = () => {
      stepX=rotateXCubeCheckbox.checked?currStepX:0;
 }
@@ -313,12 +434,49 @@ rotateYDCubeCheckbox.onchange = () => {
 rotateZDCubeCheckbox.onchange = () => {
      rotateYDirection=rotateYDCubeCheckbox.checked?-1:1;
 }
-rotateXCubeCheckbox.checked=false;
-rotateYCubeCheckbox.checked=false;
-rotateZCubeCheckbox.checked=false;
-rotateXDCubeCheckbox.checked=false;
-rotateYDCubeCheckbox.checked=false;
-rotateZDCubeCheckbox.checked=false;
+rotateXSpeedRange.onchange=()=>{
+	  currStepX=rotateXSpeedRange.value*maxStep/100.00;
+      stepX = currStepX;
+//	  console.log('spped schanged to '+stepX);
+}
+rotateYSpeedRange.onchange=()=>{
+	  currStepY=rotateYSpeedRange.value*maxStep/100.00;
+      stepY = currStepY;
+}
+rotateZSpeedRange.onchange=()=>{
+	  currStepZ=rotateZSpeedRange.value*maxStep/100.00;
+      stepZ = currStepZ;
+}
+//console.dir(rotateXSpeedRange);
+
+
+rotateXCubeCheckbox.checked  = false;
+rotateYCubeCheckbox.checked  = false;
+rotateZCubeCheckbox.checked  = false;
+rotateXDCubeCheckbox.checked = false;
+rotateYDCubeCheckbox.checked = false;
+rotateZDCubeCheckbox.checked = false;
+/* ----------- Rectangle ------------*/
+const boxRect = document.querySelector('.boxRect');
+var radioGroup = document.querySelector('.radio-group');
+var currentClass = '';
+
+function changeSide() {
+  var checkedRadio = radioGroup.querySelector(':checked');
+  var showClass = 'show-' + checkedRadio.value;
+  if ( currentClass ) {
+    boxRect.classList.remove( currentClass );
+  }
+  boxRect.classList.add( showClass );
+  currentClass = showClass;
+}
+// set initial side
+changeSide();
+
+radioGroup.addEventListener( 'change', changeSide );
+/*-----------------------------------*/
+
+
 requestAnimationFrame(step);
 function step(timestamp) {
   if (!start) start = timestamp;
@@ -346,7 +504,7 @@ function step(timestamp) {
         rotateZ+=stepZ;
 	 }
 	 //let s=
-  //   console.log(rotateX+' '+rotateY+' '+rotateZ); 
+   //  console.log(stepX+' '+stepY+' '+stepZ); 
      let sX='';
 	 let sY='';
 	 let sZ='';
