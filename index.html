@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
  <meta http-equiv="content-type" content="text/html; charset=utf-8" >
@@ -54,11 +54,75 @@ body { font-family: sans-serif; }
 .cube.is-backface-hidden .cube__face {
   backface-visibility: hidden;
 }
+
+
+.continergr {
+  position:relative;
+  margin: 0;
+  text-align: center;
+  background: #F4F1F8;
+}
+
+section {
+  display: block;
+  width: 660px;
+  margin: 0 auto;
+}
+div {
+  height: 120px;
+  width: 220px;  
+}
+.container {
+  position: relative;
+  display: inline-block;
+  height: 120px;
+  margin: 0 2em 2em 0;
+  opacity: .7;
+  border-radius: 5px;
+  background: #E4E1E4;
+  perspective: 400px;
+  transform-style: preserve-3d;
+}
+.transform {
+  position: absolute;
+  bottom: 0;
+  background: rgba(65, 245, 254, .5);
+  border-radius: 5px;
+  animation: notransform 5s infinite;
+}
+.translate3d {
+  transform: translate3d(20px,20px,20px);
+}
+.scale3d {
+  transform: scale3d(0,0,1);
+  animation-delay: .5s;
+}
+.rotate3d {
+  transform: rotate3d(2, 1, 3, -30deg);
+  animation-delay: 1s;
+  
+  }
+.rotateX {
+  transform: rotateX(180deg);
+  animation-delay: 1.5s;
+}
+.rotateY {
+  transform: rotateY(180deg);
+  animation-delay: 2s;
+}
+.rotateZ {
+  transform: rotateZ(180deg);
+  animation-delay: 2.5s;
+}
+@keyframes notransform {
+  50% {transform: none;}
+}
+
+
 </style>
 </head>
 <body>
 <h1>Лабораторная работа 3D-преобразования</h1>
-<div>
 <div class="scene">
   <div class="cube">
     <div class="cube__face cube__face--front">передняя</div>
@@ -98,18 +162,53 @@ body { font-family: sans-serif; }
   <span class="rxyz">
   <label>
     Вращение JavaScript по Х
-    <input class="xrotate-checkbox" type="checkbox" checked />
+    <input class="xrotate-checkbox" type="checkbox" />
     Y
-    <input class="yrotate-checkbox" type="checkbox" checked />
+    <input class="yrotate-checkbox" type="checkbox" />
     Z
-    <input class="zrotate-checkbox" type="checkbox" checked />
+    <input class="zrotate-checkbox" type="checkbox" />
+  </label>
+  <br />
+  <label>
+    Направл. вращение по Х
+    <input class="xdrotate-checkbox" type="checkbox" />
+    Y
+    <input class="ydrotate-checkbox" type="checkbox"  />
+    Z
+    <input class="zdrotate-checkbox" type="checkbox"  />
   </label>
   </span>
 </p>
 </div>
-<div>
-Трансформации
+
+<h2>CSS3 3D Трансформации</h2>
+<section>
+<div class="container">
+  <div class="transform translate3d"><h4>translate3d(20px,20px,20px)</h4></div>
+  </div>
+  
+<div class="container">
+  <div class="transform scale3d"><h4>scale3d(0,0,1)</h4></div>
+  </div>
+  
+<div class="container">
+  <div class="transform  rotate3d"><h4>rotate3d(2, 1, 3, -30deg)</h4></div>
+  </div>
+
+<div class="container">
+  <div class="transform  rotateX"><h4>rotateX(180deg)</h4></div>
+  </div>
+  
+  <div class="container">
+  <div class="transform  rotateY"><h4>rotateY(180deg)</h4></div>
+  </div>
+  
+  <div class="container">
+  <div class="transform  rotateZ"><h4>rotateZ(180deg)</h4></div>
+  </div>
+</section>
 </div>
+
 <script>
 "use strict";
 function RangeDisplay( input ) {
@@ -134,7 +233,11 @@ let rotateX = 0;
 let rotateZ = 0;
 let currStepX=4; 
 let currStepY=4; 
-let currStepZ=4; 
+let currStepZ=4;
+let rotateXDirection=1; 
+let rotateYDirection=1; 
+let rotateZDirection=1; 
+
 let stepX=currStepX; 
 let stepY=currStepY; 
 let stepZ=currStepZ; 
@@ -189,6 +292,9 @@ backfaceCheckbox.onchange = () =>
 const rotateXCubeCheckbox = document.querySelector('.xrotate-checkbox');
 const rotateYCubeCheckbox = document.querySelector('.yrotate-checkbox');
 const rotateZCubeCheckbox = document.querySelector('.zrotate-checkbox');
+const rotateXDCubeCheckbox = document.querySelector('.xdrotate-checkbox');
+const rotateYDCubeCheckbox = document.querySelector('.ydrotate-checkbox');
+const rotateZDCubeCheckbox = document.querySelector('.zdrotate-checkbox');
 rotateXCubeCheckbox.onchange = () => {
      stepX=rotateXCubeCheckbox.checked?currStepX:0;
 }
@@ -198,9 +304,21 @@ rotateYCubeCheckbox.onchange = () => {
 rotateZCubeCheckbox.onchange = () => {
      stepZ=rotateZCubeCheckbox.checked?currStepZ:0;
 }
+rotateXDCubeCheckbox.onchange = () => {
+     rotateXDirection=rotateXDCubeCheckbox.checked?-1:1;
+}
+rotateYDCubeCheckbox.onchange = () => {
+     rotateYDirection=rotateYDCubeCheckbox.checked?-1:1;
+}
+rotateZDCubeCheckbox.onchange = () => {
+     rotateYDirection=rotateYDCubeCheckbox.checked?-1:1;
+}
 rotateXCubeCheckbox.checked=false;
 rotateYCubeCheckbox.checked=false;
 rotateZCubeCheckbox.checked=false;
+rotateXDCubeCheckbox.checked=false;
+rotateYDCubeCheckbox.checked=false;
+rotateZDCubeCheckbox.checked=false;
 requestAnimationFrame(step);
 function step(timestamp) {
   if (!start) start = timestamp;
@@ -208,10 +326,25 @@ function step(timestamp) {
 //  console.log('movement '+start+' '+progress+' '+timestamp); 
   if (progress>200) {
   //   console.log('movement'); 
-     start=timestamp; 
-     rotateX+=stepX;
-     rotateY+=stepY;
-     rotateZ+=stepZ;
+     start=timestamp;
+     if (rotateXDirection==-1) { 	 
+	    rotateX-=stepX;
+     }
+	 else {
+	    rotateX+=stepX;
+	 }
+     if (rotateYDirection==-1) { 	 
+        rotateY-=stepY;
+     }
+	 else {
+        rotateY+=stepY;
+	 }
+     if (rotateZDirection==-1) { 	 
+        rotateZ-=stepZ;
+     }
+	 else {
+        rotateZ+=stepZ;
+	 }
 	 //let s=
   //   console.log(rotateX+' '+rotateY+' '+rotateZ); 
      let sX='';
