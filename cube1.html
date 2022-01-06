@@ -51,7 +51,11 @@ h2,h1 {
 .cube__face--right  { transform: rotateY( 90deg) translateZ(100px); }
 .cube__face--back   { transform: rotateY(180deg) translateZ(100px); }
 .cube__face--left   { transform: rotateY(-90deg) translateZ(100px); }
-.cube__face--top    { transform: rotateX( 90deg) translateZ(100px); }
+
+.cube__face--top    { transform-origin: 50% 50% -50%;
+                                transform: rotateX(-90deg) rotateZ(-45deg); 
+
+
 .cube__face--bottom { transform: rotateX(-90deg) translateZ(100px); }
 
 .cube.is-backface-hidden .cube__face {
@@ -264,154 +268,11 @@ label { margin-right: 10px; }
   z-index: 2;
   background: hsla(0, 0%, 100%, 0.8);
 }
-/* Пирамида*/
-
-@media (min-width: 62rem) {
-  .home__main {
-    display: block;
-  }
-}
-
-@-webkit-keyframes pyramid__spinY {
-  from {
-    -webkit-transform: rotateY(0deg);
-            transform: rotateY(0deg);
-  }
-  to {
-    -webkit-transform: rotateY(360deg);
-            transform: rotateY(360deg);
-  }
-}
-
-@keyframes pyramid__spinY {
-  from {
-    -webkit-transform: rotateY(0deg);
-            transform: rotateY(0deg);
-  }
-  to {
-    -webkit-transform: rotateY(360deg);
-            transform: rotateY(360deg);
-  }
-}
-
-.pyramid__main {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-}
-
-.pyramid__container {
-  width: 80%;
-  -webkit-perspective: 800px;
-          perspective: 800px;
-  -webkit-perspective-origin: center;
-          perspective-origin: center;
-}
-
-@media (min-width: 30rem) {
-  .pyramid__container {
-    width: 33.3333%;
-  }
-}
-
-.pyramid__shape {
-  -webkit-transform-origin: 50% 90% 0px;
-          transform-origin: 50% 90% 0px;
-  -webkit-transform-style: preserve-3d;
-          transform-style: preserve-3d;
-  -webkit-transform: rotateX(20deg) rotateY(40deg);
-          transform: rotateX(20deg) rotateY(40deg);
-  position: relative;
-  -webkit-animation: pyramid__spinY 8s infinite linear;
-          animation: pyramid__spinY 8s infinite linear;
-}
-
-.pyramid__shape div:not(.pyramid__base) {
-  position: absolute;
-  border-left: 150px solid transparent;
-  border-right: 150px solid transparent;
-  border-bottom: 300px solid;
-  -webkit-transform-origin: 150px 300px 0;
-          transform-origin: 150px 300px 0;
-  /* bottom of trangle (1/2 Base, Apothem) */
-  opacity: 0.5;
-}
-
-.pyramid__shape div:after {
-  position: absolute;
-  top: 150px;
-  text-align: center;
-  color: #fff;
-  font-size: 1.75em;
-  text-transform: uppercase;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-          transform: translateX(-50%);
-}
-
-.pyramid__base {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  background-color: rgba(147, 81, 166, 0.9);
-  -webkit-transform: rotateX(90deg) translate3d(0px, 0px, -150px);
-          transform: rotateX(90deg) translate3d(0px, 0px, -150px);
-  opacity: 0.5;
-}
-
-.pyramid__base:after {
-  content: 'Веб-технологии';
-}
-
-.pyramid__shape div.pyramid__front {
-  border-bottom-color: #e04545;
-  -webkit-transform: rotateY(0deg) translate3d(0px, 0px, 150px) rotateX(30deg);
-          transform: rotateY(0deg) translate3d(0px, 0px, 150px) rotateX(30deg);
-}
-
-.pyramid__shape div.pyramid__front:after {
-  content: 'HTTP';
-}
-
-.pyramid__shape div.pyramid__back {
-  border-bottom-color: #ccaf5a;
-  -webkit-transform: rotateY(90deg) translate3d(0px, 0px, 150px) rotateX(30deg);
-          transform: rotateY(90deg) translate3d(0px, 0px, 150px) rotateX(30deg);
-}
-
-.pyramid__shape div.pyramid__back:after {
-  content: 'HTML';
-}
-
-.pyramid__shape div.pyramid__left {
-  border-bottom-color: #800000;
-  -webkit-transform: rotateY(180deg) translate3d(0px, 0px, 150px) rotateX(30deg);
-          transform: rotateY(180deg) translate3d(0px, 0px, 150px) rotateX(30deg);
-}
-
-.pyramid__shape div.pyramid__left:after {
-  content: 'Javascript';
-}
-
-.pyramid__shape div.pyramid__right {
-  border-bottom-color: #4ccfc8;
-  -webkit-transform: rotateY(270deg) translate3d(0px, 0px, 150px) rotateX(30deg);
-          transform: rotateY(270deg) translate3d(0px, 0px, 150px) rotateX(30deg);
-}
-
-.pyramid__shape div.pyramid__right:after {
-  content: 'CSS';
-}
-
 
 </style>
 </head>
 <body>
 <h1>Лабораторная работа CSS3 3D-преобразования</h1>
-<p><a href="css_cubes/index.html">С новым 2022 годом</a></p>
 <h2>1. Вращающийся куб</h2>
 <div class="scene">
   <div class="cube">
@@ -574,23 +435,6 @@ label { margin-right: 10px; }
   <div class="container">
   <div class="transformDiv transform  rotateZ"><h4>rotateZ(180deg)</h4></div>
   </div>
-</section>
-
-<h2>5. Работа с треугольниками. Пирамида</h2>
-<section>
-<div class="home__main">
-  <div class="pyramid__main">
-    <div class="pyramid__container">
-	  <div class="pyramid__shape">
-	    <div class="pyramid__base"></div>
-		<div class="pyramid__front"></div>
-		<div class="pyramid__back"></div>
-		<div class="pyramid__right"></div>
-		<div class="pyramid__left"></div>
-	  </div>
-	</div>
-  </div>
-</div>
 </section>
 
 
